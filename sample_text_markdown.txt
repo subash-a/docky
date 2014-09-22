@@ -1,0 +1,11 @@
+%% Docky
+
+The Docky application is nifty tool to create documents in plain text and convert then into a html page with paragraphs and tags and links and images.
+
+*Docky* resembles a markdown language which is easy to remember and quick to adapt to.
+
+Using this is very easy, type anything in a text file and then run it on docky {footnote1}
+
+This tool can be used in a very *small* team to write up documents {to quickly} build a html for web usage.
+
+To view the usage details refer [[this] http://www.github.com/subash-a/docky.git]
