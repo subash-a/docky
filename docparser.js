@@ -15,7 +15,20 @@ var FOOTNOTE_TYPE = "footnote";
 var TEXT_TYPE = "text";
 var LINK_TYPE = "link";
 var EMPTY_STRING = "";
-
+var FOOTNOTE_COUNT = 0;
+var FOOTNOTES = [];
+var TAGMAP = {
+    "emphasis":"b",
+    "footnote":"sup",
+    "link":"a",
+    "p":"p",
+    "h1":"h1",
+    "h2":"h2",
+    "h3":"h3",
+    "h4":"h4",
+    "h5":"h5",
+    "span":"span"
+};
 
 var getParagraphs = function(string) {
     var paragraphs = string.split(PARAGRAPH_DOS);
@@ -54,7 +67,9 @@ var getNormalParagraph = function(paragraph) {
 	    if(parts[0] !== EMPTY_STRING) {
 		result.push({"content":parts[0], "type":TEXT_TYPE});
 	    }
-	    result.push({"content":content,"type":FOOTNOTE_TYPE});
+	    FOOTNOTE_COUNT = FOOTNOTE_COUNT + 1;
+	    FOOTNOTES.push({"content":content,"index":FOOTNOTE_COUNT});
+	    result.push({"content":FOOTNOTE_COUNT,"type":FOOTNOTE_TYPE});
 	    paragraph = parts[1];
 	    match = FOOTNOTE.exec(paragraph);
 	}
@@ -110,9 +125,10 @@ var buildMarkup = function (data) {
 		return key+"='"+attributes[key]+"' "; 
 	    }).join("");
 	};
+	var tagString = TAGMAP[tag];
 	var contentString = escapeContent ? escapeHTML(content) : content;
 	var attributeString = attributes ? buildAttributes(attributes) : "";
-	return "<"+tag+" "+attributeString+">"+contentString+"</"+tag+">";
+	return "<"+tagString+" "+attributeString+">"+contentString+"</"+tagString+">";
     };
     var parseParagraph = function(paragraph) {
 	var parseText = function (fragment) {
@@ -163,8 +179,15 @@ var buildMarkup = function (data) {
 	    parseHeader(paragraph);
 	}
     };
+    var parseFooter = function(footerContent) {
+	var addFooter = function(footer) {
+	    return buildTag(FOOTNOTE_TYPE,footer.index) + " " + buildTag("span",footer.content);
+	};
+	return footerContent.map(addFooter).join(", ");
+    }
     var finalMarkup = "";
     data.map(showData);
+    finalMarkup = finalMarkup + parseFooter(FOOTNOTES);
     return finalMarkup;
 }
 
