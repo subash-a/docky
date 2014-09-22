@@ -1,4 +1,24 @@
 {
-	"name":"docky",
-	"version":"1.0.0"
+    "name":"docky",
+    "version":"1.0.0",
+    "description":"A small markdown converter, can be used where limited set of markup items are required like images, links, footnotes and emphasised texts",
+    "contributors":[{
+	"name":"Subhash Sharma",
+	"email":"s7subash@gmail.com"
+    }],
+    "main":"docparser.js",
+    "repository": {
+	"type":"git",
+	"url":"https://github.com/subash-a/docky.git",
+    },
+    "keywords":[
+	"docky",
+	"markup",
+	"markdown"
+    ],
+    "dependencies": {},
+    "preferGlobal": true,
+    "private": true,
+    "analyze": true,
+    "license": "MIT"
 }
