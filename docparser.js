@@ -156,7 +156,7 @@ var buildMarkup = function (data) {
     };
     
     var showData = function (paragraph) {
-	if(paragraph.length) {
+	if(paragraph.type === PARAGRAPH_TYPE) {
 	    parseParagraph(paragraph);
 	}
 	else {
@@ -176,7 +176,7 @@ getFileContents("sample_text_markdown.txt",function(err,data){
     paragraphs = getParagraphs(string);
     result = paragraphs.map(processParagraph);
     console.log(result);
-    console.log(result[1].content);
+    console.log(result[5].content);
     console.log("================ Parsed ==================");
     output = buildMarkup(result);
 

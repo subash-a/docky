@@ -1,12 +1,10 @@
 var sampleData = [
     {"content":"Hello","type":"h3"},
-    [
-	{"content":"This is a para","type":"text"},
-	{"content":"This is also a para","type":"text"},
-	{"content":"This is a footnote","type":"footnote"},
-	{"content":"This is an emphasised text","type":"emphasis"},
-	{"content":"Link","attribute":"http://www.google.com","type":"link"}
-    ]
+    {"content":[{"content":"This is a para","type":"text"},
+		{"content":"This is also a para","type":"text"},
+		{"content":"This is a footnote","type":"footnote"},
+		{"content":"This is an emphasised text","type":"emphasis"},
+		{"content":"Link","attribute":"http://www.google.com","type":"link"}], type:"p"}
 ];
 
 var buildMarkup = function (data) {
@@ -44,6 +42,7 @@ var buildMarkup = function (data) {
 	    return content;
 	};
 	var parseFragment = function(fragment) {
+	    console.log(fragment);
 	    switch(fragment.type) {
 	    case "text": parseText(fragment);
 		break;
@@ -58,7 +57,7 @@ var buildMarkup = function (data) {
 	    };
 	};
 	var content = "";
-	paragraph.map(parseFragment);
+	paragraph.content.map(parseFragment);
 	console.log(buildTag("p",content,{},false));
     };
 
@@ -67,7 +66,7 @@ var buildMarkup = function (data) {
     };
     
     var showData = function (paragraph) {
-	if(paragraph.length) {
+	if(paragraph.type === "p") {
 	    parseParagraph(paragraph);
 	}
 	else {
