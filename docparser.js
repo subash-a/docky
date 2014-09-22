@@ -148,11 +148,11 @@ var buildMarkup = function (data) {
 	};
 	var content = "";
 	paragraph.content.map(parseFragment);
-	console.log(buildTag(paragraph.type,content,{},false));
+	finalMarkup = finalMarkup + buildTag(paragraph.type,content,{},false);
     };
 
     var parseHeader = function (paragraph) {
-	console.log(buildTag(paragraph.type, paragraph.content));
+	finalMarkup = finalMarkup + buildTag(paragraph.type, paragraph.content);
     };
     
     var showData = function (paragraph) {
@@ -163,22 +163,32 @@ var buildMarkup = function (data) {
 	    parseHeader(paragraph);
 	}
     };
+    var finalMarkup = "";
     data.map(showData);
-}
-
-var getFileContents = function(filename, callback) {
-    var reader = fs.readFile(filename,callback);
+    return finalMarkup;
 }
 
 
-getFileContents("sample_text_markdown.txt",function(err,data){
-    string = data.toString();
-    paragraphs = getParagraphs(string);
-    result = paragraphs.map(processParagraph);
-    console.log(result);
-    console.log(result[5].content);
-    console.log("================ Parsed ==================");
-    output = buildMarkup(result);
 
-});
+var startServer = function (port) {
 
+
+    var requestHandler = function (req, res) {
+	var processFile = function(err,data){
+	    string = data.toString();
+	    paragraphs = getParagraphs(string);
+	    result = paragraphs.map(processParagraph);
+            output = buildMarkup(result);
+	    res.write(output);
+	    res.end();
+	};
+	var getFileContents = function(filename, callback) {
+	    var reader = fs.readFile(filename,callback);
+	}
+    	var markup = getFileContents(FILENAME, processFile);
+    }
+    var httpServer = http.createServer(requestHandler);
+    httpServer.listen(port);
+}
+
+startServer(5000);
