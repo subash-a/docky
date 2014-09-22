@@ -93,14 +93,92 @@ var processParagraph = function(paragraph) {
     }
 }
 
+/*
+ * NOTE: The below section contains the code for building a html from ground
+ * up and builds all the supported tags in the markdown. This code needs to
+ * be changed when the support for additional components come into the module
+ */
+var buildMarkup = function (data) {
+    var escapeHTML = function(text) {
+	return text.replace(/&/g,"&amp;")
+	.replace(/>/g,"&gt;")
+	.replace(/</g,"&lt;");
+    };
+    var buildTag = function(tag, content, attributes, escapeContent) {
+	var buildAttributes = function (attributes) {
+	    return Object.keys(attributes).map(function(key) {
+		return key+"='"+attributes[key]+"' "; 
+	    }).join("");
+	};
+	var contentString = escapeContent ? escapeHTML(content) : content;
+	var attributeString = attributes ? buildAttributes(attributes) : "";
+	return "<"+tag+" "+attributeString+">"+contentString+"</"+tag+">";
+    };
+    var parseParagraph = function(paragraph) {
+	var parseText = function (fragment) {
+	    content = content + fragment.content;
+	    return content;
+	};
+	var parseEmphasis = function(fragment) {
+	    content = content + buildTag(fragment.type,fragment.content);
+	    return content;
+	};
+	var parseFootnote = function (fragment) {
+	    content = content + buildTag(fragment.type, fragment.content);
+	    return content;
+	};
+	var parseLink = function (fragment) {
+	    fragment.attribute = {"href":fragment.attribute};
+	    content = content + buildTag(fragment.type,fragment.content,fragment.attribute);
+	    return content;
+	};
+	var parseFragment = function(fragment) {
+	    switch(fragment.type) {
+	    case TEXT_TYPE: parseText(fragment);
+		break;
+	    case EMPHASIS_TYPE: parseEmphasis(fragment);
+		break;
+	    case FOOTNOTE_TYPE: parseFootnote(fragment);
+		break;
+	    case LINK_TYPE: parseLink(fragment);
+		break;
+	    default: parseText(fragment);
+		break;
+	    };
+	};
+	var content = "";
+	paragraph.content.map(parseFragment);
+	console.log(buildTag(paragraph.type,content,{},false));
+    };
+
+    var parseHeader = function (paragraph) {
+	console.log(buildTag(paragraph.type, paragraph.content));
+    };
+    
+    var showData = function (paragraph) {
+	if(paragraph.length) {
+	    parseParagraph(paragraph);
+	}
+	else {
+	    parseHeader(paragraph);
+	}
+    };
+    data.map(showData);
+}
+
 var getFileContents = function(filename, callback) {
     var reader = fs.readFile(filename,callback);
 }
+
 
 getFileContents("sample_text_markdown.txt",function(err,data){
     string = data.toString();
     paragraphs = getParagraphs(string);
     result = paragraphs.map(processParagraph);
     console.log(result);
+    console.log(result[1].content);
+    console.log("================ Parsed ==================");
+    output = buildMarkup(result);
+
 });
 
