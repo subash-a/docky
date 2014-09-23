@@ -109,9 +109,9 @@ var getNormalParagraph = function(paragraph) {
     
     getEmphasis();
     getFootnote();
-    getLink();
     getImage();
-    
+    getLink();
+
     if(paragraph !== EMPTY_STRING) {
 	result.push({"content":paragraph,"type":TEXT_TYPE});
     }
@@ -136,7 +136,8 @@ var buildMarkup = function (data) {
     var escapeHTML = function(text) {
 	return text.replace(/&/g,"&amp;")
 	.replace(/>/g,"&gt;")
-	.replace(/</g,"&lt;");
+	.replace(/</g,"&lt;")
+	.replace(/"/g,"&quot;");
     };
     var buildTag = function(tag, content, attributes, escapeContent) {
 	var buildAttributes = function (attributes) {
